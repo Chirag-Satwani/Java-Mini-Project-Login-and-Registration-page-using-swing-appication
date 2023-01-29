@@ -23,5 +23,8 @@ https://drive.google.com/drive/folders/1n4OLugCx5EtnHdgd8JHgu8EePAb156_A
 
 
 or
+
 if you have downloaded files (database24 and swingapplication) then, go to swinApplication24/dist/jar file
 by opning the jar file, you will be able to see the GUI
+
+Necessary to download sqlyog.exe under mysql link to observe changes in your database. By Registring through GUI
