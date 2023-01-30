@@ -7,7 +7,6 @@ package testswingapplication24;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,7 +22,6 @@ public class Login extends javax.swing.JFrame
 
     Connection con = null;
     Statement st = null;
-    PreparedStatement pst = null;
     ResultSet rs= null;
     
     public Login() throws ClassNotFoundException, SQLException {
@@ -40,7 +38,6 @@ public class Login extends javax.swing.JFrame
             System.out.println("connected");
             
             st=con.createStatement();
-           
         }
         catch(ClassNotFoundException | SQLException e)
         {
@@ -403,24 +400,38 @@ System.exit(0);        // TODO add your handling code here:
        String salary = registerSalary.getText();
        String city=registerCity.getText();
        
-       boolean uniqueid=true;
-      
+       String tableid;
+       boolean uniqueId=true;
        try
        {
-           pst=con.prepareStatement("SELECT * FROM emp WHERE empid=?");
-           pst.setString(1,id);
-           rs = pst.executeQuery();
+           String query= "SELECT empid FROM emp";
+           rs=st.executeQuery(query);
            
-           if(rs.next())
-           { 
-               System.out.println("chal rha hai");
-               uniqueid=false;
-                 
-           }
+           
+           
+           
+           
+                                       //or in place of creating a loop . set emoid as primary key(that means it will contain only unique elements)
+                                                           //     i.e.create query      ALTER TABLE emp
+            while(rs.next())                                                     //     ADD PRIMARY KEY (empid)
+           {                      
+                                       // or you can create a query to "SELECT * FROM emp WHERE empid =id"   and drop in if else
+             
+             
+               tableid=rs.getString(1);
+               
+               if(tableid.equals(id))
+               {
+                   errorMessage2.setText("Id should be Unique");
+                   errorMessage2.setVisible(true);
+                   uniqueId=false;
+                   break;
+               }
+               
              
            }
            
-         catch (SQLException ex) {
+       } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
        
@@ -436,12 +447,9 @@ System.exit(0);        // TODO add your handling code here:
            
         }
         else
-         { 
-            if(uniqueid==true)
-            {
+         {  if(uniqueId==true){
             try
             {
-              
                 String query= "INSERT INTO emp VALUES ('"+id+"','"+name+"','"+password2+"','"+salary+"','"+city+"')";
                 int i=st.executeUpdate(query);         //kind of iterator
                 
@@ -456,18 +464,19 @@ System.exit(0);        // TODO add your handling code here:
                     errorMessage2.setVisible(true);
                 }
                 
+                
+                
+                
             } 
-            catch (SQLException ex) {
+            
+             catch (SQLException ex) {
                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             }
-            else
-            {
-                    errorMessage2.setText("Id should be unique");
-                    errorMessage2.setVisible(true); 
-            }
-             
-        
+         else{
+             errorMessage2.setText("Id should be Unique");
+             errorMessage2.setVisible(true);
+         }
          
         }
         
