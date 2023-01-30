@@ -7,6 +7,7 @@ package testswingapplication24;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,6 +23,7 @@ public class Login extends javax.swing.JFrame
 
     Connection con = null;
     Statement st = null;
+    PreparedStatement pst = null;
     ResultSet rs= null;
     
     public Login() throws ClassNotFoundException, SQLException {
@@ -38,6 +40,7 @@ public class Login extends javax.swing.JFrame
             System.out.println("connected");
             
             st=con.createStatement();
+           
         }
         catch(ClassNotFoundException | SQLException e)
         {
@@ -400,33 +403,24 @@ System.exit(0);        // TODO add your handling code here:
        String salary = registerSalary.getText();
        String city=registerCity.getText();
        
-       String tableid;
-       boolean uniqueId=true;
+       boolean uniqueid=true;
+      
        try
        {
-           String query= "SELECT empid FROM emp";
-           rs=st.executeQuery(query);
+           pst=con.prepareStatement("SELECT * FROM emp WHERE empid=?");
+           pst.setString(1,id);
+           rs = pst.executeQuery();
            
-           
-           while(rs.next())
+           if(rs.next())
            { 
-             
-             
-             
-               tableid=rs.getString(1);
-               
-               if(tableid.equals(id))
-               {
-                   errorMessage2.setText("Id should be Unique");
-                   errorMessage2.setVisible(true);
-                   uniqueId=false;
-                   break;
-               }
-               
+               System.out.println("chal rha hai");
+               uniqueid=false;
+                 
+           }
              
            }
            
-       } catch (SQLException ex) {
+         catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
        
@@ -442,9 +436,12 @@ System.exit(0);        // TODO add your handling code here:
            
         }
         else
-         {  if(uniqueId==true){
+         { 
+            if(uniqueid==true)
+            {
             try
             {
+              
                 String query= "INSERT INTO emp VALUES ('"+id+"','"+name+"','"+password2+"','"+salary+"','"+city+"')";
                 int i=st.executeUpdate(query);         //kind of iterator
                 
@@ -459,19 +456,18 @@ System.exit(0);        // TODO add your handling code here:
                     errorMessage2.setVisible(true);
                 }
                 
-                
-                
-                
             } 
-            
-             catch (SQLException ex) {
+            catch (SQLException ex) {
                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             }
             }
-         else{
-             errorMessage2.setText("Id should be Unique");
-             errorMessage2.setVisible(true);
-         }
+            else
+            {
+                    errorMessage2.setText("Id should be unique");
+                    errorMessage2.setVisible(true); 
+            }
+             
+        
          
         }
         
